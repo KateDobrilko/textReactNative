@@ -21,36 +21,14 @@ class testReactNative extends Component {
       {title: 'Rooms', index: 2},
       {title: 'Users', index: 3}
     ];
-    return (
-      <View style={{flex:1}}>
-      
+    return (           
         <Navigator
           style={{flex: 1}}
-          initialRoute={routes[0]}
-          initialRouteStack={routes}
-          renderScene={(route, navigator) => {
-          if (route.index === 0) {
-            return 
-            <Login             
-                navigator={navigator} routes={routes} />            
-          }
-          if (route.index === 1) {
-            return 
-            <Messages
-              navigator={navigator}  routes={routes} />            
-          } 
-          if (route.index === 2) {
-            return 
-            <Rooms
-              navigator={navigator} routes={routes} />            
-          }
-          if (route.index === 3){
-            return 
-            <Users
-              navigator={navigator}  routes={routes}/>            
-          }
-      }}
-      /></View>
+          initialRoute={{name: 'Login', index: 0}}
+        
+          renderScene={(route, navigator) => {         
+            return <Login />            
+         }} />
     );
   }
 }
