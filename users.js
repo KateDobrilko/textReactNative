@@ -4,9 +4,9 @@ import { View, Text, TouchableHighlight } from 'react-native';
 export class Users extends Component {
    navRooms(){
     var routes = this.props.routes;
-    this.props.navigator.push({
-      index: routes[2]
-    })
+    this.props.navigator.jumpTo(
+      routes[2]
+    )
   }
   render() {
     return (

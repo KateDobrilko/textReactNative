@@ -3,10 +3,9 @@ import { View, Text, TouchableHighlight } from 'react-native';
 
 export  class Messages extends Component {
   navLogin(){
-    var routes = this.props.routes;
-    this.props.navigator.push({
-      index: routes[0]
-    })
+    this.props.navigator.jumpTo(    
+        routes[3]
+    )
   }
   render() {
     return (

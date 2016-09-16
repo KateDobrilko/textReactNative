@@ -3,10 +3,10 @@ import { View, Text, TouchableHighlight } from 'react-native';
 
 export class Rooms extends Component {
     navMessages(){
-    var routes = this.props.routes;
-    this.props.navigator.push({
-      index: routes[3]
-    })
+    
+    this.props.navigator.jumpTo(  
+        routes[1]   
+    )
   }
   render() {
     return (
