@@ -38,6 +38,7 @@ class testReactNative extends Component {
         <Navigator
           style = {{flex: 1}}
           initialRoute = {routes[0]}
+          initialRouteStack = {routes}
           renderScene = {(route, navigator) => navigatorRenderScene(route, navigator)} />
     );
   }

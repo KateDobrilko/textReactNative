@@ -15,7 +15,7 @@ export default class Login extends Component {
         <Text>Login</Text>
        <TextInput></TextInput>       
         <Text>Password</Text>
-        <TextInput></TextInput>       
+        <TextInput></TextInput>     
       
         <TouchableHighlight style={styles.goToButton} onPress={this.navUsers.bind(this)}>
           <Text>Go to Users Screen</Text>
