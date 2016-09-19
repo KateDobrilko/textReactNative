@@ -1,21 +1,25 @@
-import React, { Component, PropTypes  } from 'react';
-import { View, Text, TouchableHighlight } from 'react-native';
+import React, {Component, PropTypes} from 'react';
+import {View, Navigator, Text, TouchableHighlight} from 'react-native';
 
-export class Users extends Component {
-   navRooms(){
-    var routes = this.props.routes;
-    this.props.navigator.jumpTo(
-      routes[2]
-    )
-  }
-  render() {
-    return (
-      <View>
-        <Text>This is users page scene!</Text>
-        <TouchableHighlight onPress={this.navRooms.bind(this)}>
-          <Text>Go to Rooms Screen</Text>
-        </TouchableHighlight>
-      </View>
-    )
-  }
+export default class Users extends Component {
+
+    navMessages(){
+        this.props.navigator.push({
+            id: 'Login',
+            name: 'Login'
+        });
+
+    }
+
+    render() {
+        return (
+            <View>
+                <Text>This is rooms page scene!</Text>
+                <TouchableHighlight onPress = {this.navMessages.bind(this)}>
+                    <Text>Go to Users Screen</Text>
+                </TouchableHighlight>
+            </View>
+        )
+
+    }
 }

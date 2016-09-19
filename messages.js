@@ -1,7 +1,7 @@
 import React, { Component, PropTypes  } from 'react';
 import { View, Text, TouchableHighlight } from 'react-native';
 
-export  class Messages extends Component {
+export default class Messages extends Component {
   navLogin(){
     this.props.navigator.jumpTo(    
         routes[3]

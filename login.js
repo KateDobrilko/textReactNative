@@ -1,39 +1,64 @@
-import React, { Component, PropTypes  } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableHighlight } from 'react-native';
+import React, {Component, PropTypes} from 'react';
+import {View,  Navigator, Text, StyleSheet, TextInput, TouchableHighlight, TouchableOpacity} from 'react-native';
 
-export default class Login extends Component {  
-   navUsers(){  
-    var routes = this.props.routes; 
-    this.props.navigator.jumpTo(      
-       this.props.routes[3]
-    )
-  }
-  render() {
-    return (
-      <View> 
-       <Text style={styles.titleText}>Login page</Text>
-        <Text>Login</Text>
-       <TextInput></TextInput>       
-        <Text>Password</Text>
-        <TextInput></TextInput>     
-      
-        <TouchableHighlight style={styles.goToButton} onPress={this.navUsers.bind(this)}>
-          <Text>Go to Users Screen</Text>
-        </TouchableHighlight>
-      </View>
-    )
-  }
+export default class Login extends Component {
+    render() {
+        return (
+            <Navigator
+                renderScene = {this.renderScene.bind(this)}
+                navigationBar = {
+            <Navigator.NavigationBar style={{backgroundColor: '#246dd5', alignItems: 'center'}}
+                routeMapper={NavigationBarRouteMapper} />
+          }/>
+        );
+    }
+
+    renderScene(route, navigator) {
+        return (
+            <View style = {{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                <TouchableHighlight
+                    onPress = {this.gotoNext.bind(this)}>
+                    <Text style = {{color: 'red'}}>Go to Next</Text>
+                </TouchableHighlight>
+            </View>
+        );
+    }
+
+    gotoNext() {
+        this.props.navigator.push({
+            id: 'Users',
+            name: 'Users'
+        });
+    }
+}
+
+var NavigationBarRouteMapper = {
+    LeftButton(route, navigator, index, navState) {
+        return null;
+    },
+    RightButton(route, navigator, index, navState) {
+        return null;
+    },
+    Title(route, navigator, index, navState) {
+        return (
+            <TouchableOpacity style = {{flex: 1, justifyContent: 'center'}}>
+                <Text style = {{color: 'white', margin: 10, fontSize: 16}}>
+                    Title
+                </Text>
+            </TouchableOpacity>
+        );
+    }
 
 }
 
 const styles = StyleSheet.create({
-  titleText: {
-    fontWeight: 'bold',
-    fontSize: 30,
-  },  
-  goToButton: {
-    backgroundColor: 'green',
-    color: 'white',
-    fontSize: 25
-  }
+    titleText: {
+        fontWeight: 'bold',
+        fontSize: 30,
+    },
+    goToButton: {
+        backgroundColor: 'green',
+        color: 'white',
+        fontSize: 25
+    }
 });
