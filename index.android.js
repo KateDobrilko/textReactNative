@@ -18,19 +18,14 @@ class testReactNative extends Component {
     render() {
         return (
             <Navigator
-                initialRoute = {{id: 'Login', name: 'Login'}}
+                initialRoute = {{id: 'Login'}}
                 renderScene = {this.renderScene.bind(this)}
-                configureScene = {(route) => {
-            if (route.sceneConfig) {
-              return route.sceneConfig;
-            }
-            return Navigator.SceneConfigs.FloatFromRight;
-          }}/>
+            />
         );
     }
 
     renderScene(route, navigator) {
-       var routeId = route.id;
+        var routeId = route.id;
         if (routeId === 'Login') {
             return (
                 <Login
@@ -55,19 +50,6 @@ class testReactNative extends Component {
                     navigator = {navigator}/>
             );
         }
-
-        return this.noRoute(navigator);
-    }
-
-    noRoute(navigator) {
-        return (
-            <View style = {{flex: 1, alignItems: 'stretch', justifyContent: 'center'}}>
-                <TouchableOpacity style = {{flex: 1, alignItems: 'center', justifyContent: 'center'}}
-                                  onPress = {() => navigator.pop()}>
-                    <Text style = {{color: 'red', fontWeight: 'bold'}}>Default route</Text>
-                </TouchableOpacity>
-            </View>
-        );
     }
 }
 
