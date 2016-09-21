@@ -12,7 +12,7 @@ import {bindActionCreators} from 'redux';
 import * as actions from '../../actions/actions';
 
 
- class RootRouter extends Component {
+class RootRouter extends Component {
     render() {
         return (
             <Navigator
@@ -39,13 +39,13 @@ import * as actions from '../../actions/actions';
         if (routeId === 'Rooms') {
             return (
                 <Rooms
-                    navigator = {navigator}  {...actions}/>
+                    navigator = {navigator}  {...actions} />
             );
         }
         if (routeId === 'Messages') {
             return (
                 <Messages
-                    navigator = {navigator}  {...actions}/>
+                    navigator = {navigator}  {...actions} data = {route.data}/>
             );
         }
     }

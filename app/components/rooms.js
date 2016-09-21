@@ -24,6 +24,16 @@ export default class Rooms extends Component {
         }
     }
 
+    navMessages(roomId) {
+        this.props.navigator.push({
+            id: 'Messages',
+            data: {
+                roomId: roomId
+            }
+
+        });
+    }
+
     navUsers() {
         this.props.navigator.push({
             id: 'Users'
@@ -53,9 +63,7 @@ export default class Rooms extends Component {
     }
 
     _renderRow(rowData) {
-        console.log('render row working');
-        console.log(rowData.email);
-        return (<TouchableOpacity
+        return (<TouchableOpacity onPress = {() => this.navMessages(rowData.id).bind(this)}
             style = {[styles.listRow]}>
             <View style = {{flex: 1, justifyContent: 'center', paddingLeft: 10, paddingRight: 10}}>
                 <Text ellipsizeMode = "tail"

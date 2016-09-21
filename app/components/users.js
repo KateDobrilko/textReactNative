@@ -20,17 +20,25 @@ export default class Users extends Component {
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state =
         {
-            users: ds.cloneWithRows(users)
-
+            users: ds.cloneWithRows(users),
+            currentRoomId: ""
         }
     }
 
+    navMessages(roomId) {
+        this.props.navigator.push({
+            id: 'Messages',
+            data: {
+                roomId: roomId
+            }
+
+        });
+    }
 
     navRooms() {
         this.props.navigator.push({
             id: 'Rooms'
         });
-
     }
 
     getUsers() {
@@ -56,8 +64,7 @@ export default class Users extends Component {
     }
 
     _renderRow(rowData) {
-        console.log(this.props.openUserChatRoom);
-        return (<TouchableOpacity onPress = {()=>{console.log(1)}}
+        return (<TouchableOpacity onPress = {() => this.navMessages(rowData.privateRoomId)}
                                   style = {{flexDirection:'row', flexWrap:'wrap', height:120,borderBottomColor: '#ededed', borderBottomWidth:1, paddingLeft:10, paddingTop:10}}>
             <View style = {{justifyContent: 'flex-start'}}>
                 <Image style = {[styles.roundedProfileImage]}
