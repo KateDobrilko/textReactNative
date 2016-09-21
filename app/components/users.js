@@ -24,7 +24,7 @@ export default class Users extends Component {
 
         }
     }
-   
+
 
     navRooms() {
         this.props.navigator.push({
@@ -56,10 +56,9 @@ export default class Users extends Component {
     }
 
     _renderRow(rowData) {
-        console.log('render row working');
-        console.log(rowData.email);
-        return (<TouchableOpacity
-            style = {{flexDirection:'row', flexWrap:'wrap', height:120,borderBottomColor: '#ededed', borderBottomWidth:1, paddingLeft:10, paddingTop:10}}>
+        console.log(this.props.openUserChatRoom);
+        return (<TouchableOpacity onPress = {()=>{console.log(1)}}
+                                  style = {{flexDirection:'row', flexWrap:'wrap', height:120,borderBottomColor: '#ededed', borderBottomWidth:1, paddingLeft:10, paddingTop:10}}>
             <View style = {{justifyContent: 'flex-start'}}>
                 <Image style = {[styles.roundedProfileImage]}
                        source = {{uri:gravatarApi.imageUrl({email:rowData.email})}}/>
@@ -85,7 +84,7 @@ export default class Users extends Component {
                 <ScrollView>
                     <ListView style = {{flex: 1, height: 500}}
                               dataSource = {this.state.users}
-                              renderRow = {this._renderRow}/>
+                              renderRow = {this._renderRow.bind(this)}/>
                 </ScrollView>
             </View>
         )

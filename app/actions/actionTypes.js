@@ -1,0 +1,2 @@
+export const OPEN_USER_CHAT_ROOM = 'OPEN_USER_CHAT_ROOM';
+
