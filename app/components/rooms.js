@@ -63,8 +63,8 @@ export default class Rooms extends Component {
     }
 
     _renderRow(rowData) {
-        return (<TouchableOpacity onPress = {() => this.navMessages(rowData.id).bind(this)}
-            style = {[styles.listRow]}>
+        return (<TouchableOpacity onPress = {() => this.navMessages(rowData.id)}
+                                  style = {[styles.listRow]}>
             <View style = {{flex: 1, justifyContent: 'center', paddingLeft: 10, paddingRight: 10}}>
                 <Text ellipsizeMode = "tail"
                       style = {{flex:1, justifyContent: 'center', fontSize:18}}>{rowData.name}</Text>
@@ -86,7 +86,7 @@ export default class Rooms extends Component {
                 <ScrollView>
                     <ListView style = {{flex: 1, height: 520, flexDirection: 'row'}}
                               dataSource = {this.state.rooms}
-                              renderRow = {this._renderRow}/>
+                              renderRow = {this._renderRow.bind(this)}/>
                 </ScrollView>
             </View>
         )

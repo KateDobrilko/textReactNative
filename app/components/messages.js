@@ -65,12 +65,14 @@ export default class Messages extends Component {
 
 
     _renderRow(rowData) {
+        var date = new Date(rowData.date);
         return (
             <View
-                style = {{flexDirection:'row', flexWrap:'wrap', height:120,borderBottomColor: '#ededed', borderBottomWidth:1, paddingLeft:10, paddingTop:10}}>
-                <View style = {{justifyContent: 'center', paddingLeft: 20}}>
-                    <Text style = {{fontSize:22}}>{rowData.date}</Text>
-                    <Text style = {{color: '#666'}}>{rowData.content}</Text>
+                style = {{flexDirection:'row', flex:1,alignItems: 'flex-start', flexWrap: 'wrap', borderBottomColor: '#ededed', borderBottomWidth:1, paddingLeft:10, paddingTop:10}}>
+                <View
+                    style = {{justifyContent: 'center', minHeight: 100, flex:1, paddingLeft: 20,  paddingRight: 20, alignItems: 'flex-start', flexWrap: 'wrap'}}>
+                    <Text style = {{ flex:1, fontSize:22}}>{date.toDateString()}</Text>
+                    <Text style = {{ flex:1, color: '#666',  flexWrap: 'wrap'}}>{rowData.content}</Text>
                 </View>
             </View> )
     }
