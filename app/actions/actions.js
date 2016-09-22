@@ -8,3 +8,9 @@ export function openUserChatRoom(firstName) {
     };
 }
 
+export function connectWebsockets() {
+    return {
+        type: types.CONNECT_WEBSOCKETS
+    };
+}
+

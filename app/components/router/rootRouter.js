@@ -6,7 +6,6 @@ import Messages from '../messages';
 import Users from '../users';
 import Rooms from '../rooms';
 
-
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as actions from '../../actions/actions';
@@ -17,42 +16,42 @@ class RootRouter extends Component {
         return (
             <Navigator
                 initialRoute = {{id: 'Login'}}
-                renderScene = {this.renderScene.bind(this)}
-            />
+                renderScene = {this.renderScene.bind(this)}/>
         );
     }
 
     renderScene(route, navigator) {
+        const {state, actions} = this.props;
         var routeId = route.id;
         if (routeId === 'Login') {
             return (
-                <Login
-                    navigator = {navigator}  {...actions}/>
+                <Login state = {state}
+                       navigator = {navigator}  {...actions}/>
             );
         }
         if (routeId === 'Users') {
             return (
-                <Users
-                    navigator = {navigator}  {...actions}/>
+                <Users state = {state}
+                       navigator = {navigator}  {...actions}/>
             );
         }
         if (routeId === 'Rooms') {
             return (
-                <Rooms
-                    navigator = {navigator}  {...actions} />
+                <Rooms state = {state}
+                       navigator = {navigator}  {...actions} />
             );
         }
         if (routeId === 'Messages') {
             return (
-                <Messages
-                    navigator = {navigator}  {...actions} data = {route.data}/>
+                <Messages state = {state}
+                          navigator = {navigator}  {...actions} data = {route.data}/>
             );
         }
     }
 }
 
 export default connect(state => ({
-        state: state.RootReducer
+        state: state
     }),
     (dispatch) => ({
         actions: bindActionCreators(actions, dispatch)

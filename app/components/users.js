@@ -25,6 +25,13 @@ export default class Users extends Component {
         }
     }
 
+    componentDidMount() {
+        console.log(this.props.connectWebsockets)
+        this.props.connectWebsockets();
+    }
+
+    
+
     navMessages(roomId) {
         this.props.navigator.push({
             id: 'Messages',
@@ -62,6 +69,7 @@ export default class Users extends Component {
                 })
         });
     }
+
 
     _renderRow(rowData) {
         return (<TouchableOpacity onPress = {() => this.navMessages(rowData.privateRoomId)}
@@ -124,5 +132,5 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 18,
         textAlign: 'center'
-    },
+    }
 });
