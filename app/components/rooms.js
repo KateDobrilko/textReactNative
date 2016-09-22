@@ -40,30 +40,10 @@ export default class Rooms extends Component {
         });
     }
 
-    getRooms() {
-        AsyncStorage.getItem('X-AUTH-TOKEN').then((authToken) => {
-            fetch('http://chat.exposit-ds.com/user/room/all',
-                {
-                    method: 'GET',
-                    headers: {
-                        'X-AUTH-TOKEN': authToken
-                    }
-                }
-            ).then((response) => response.json()).then((responseJson) => {
-                console.log(responseJson['rooms']);
-                this.setState({
-                    rooms: this.state.rooms.cloneWithRows(responseJson['rooms'])
-                });
-                console.log(this.state.rooms);
-            })
-                .catch((error) => {
-                    console.error(error);
-                })
-        });
-    }
-
     _renderRow(rowData) {
-        return (<TouchableOpacity onPress = {() => this.navMessages(rowData.id)}
+        return (<TouchableOpacity onPress = {() => {
+                        this.props.openChatRoom(rowData.id);
+                        this.navMessages();}}
                                   style = {[styles.listRow]}>
             <View style = {{flex: 1, justifyContent: 'center', paddingLeft: 10, paddingRight: 10}}>
                 <Text ellipsizeMode = "tail"
@@ -80,7 +60,7 @@ export default class Rooms extends Component {
                     <Text style = {[styles.goNextButtonText]}>Go To Users ></Text>
                 </TouchableHighlight>
                 <TouchableHighlight underlayColor = "#56a570" style = {[styles.signInButton]}
-                                    onPress = {this.getRooms.bind(this)}>
+                                    onPress = {this.props.loadMessages.bind(this)}>
                     <Text style = {[styles.signInButtonText]}>LOAD ROOMS</Text>
                 </TouchableHighlight>
                 <ScrollView>

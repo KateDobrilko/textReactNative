@@ -25,33 +25,37 @@ class RootRouter extends Component {
         var routeId = route.id;
         if (routeId === 'Login') {
             return (
-                <Login state = {state}
-                       navigator = {navigator}  {...actions}/>
+                <Login {...state}
+                    navigator = {navigator}  {...actions}/>
             );
         }
         if (routeId === 'Users') {
+            console.log(state);
             return (
-                <Users state = {state}
+                <Users roomId = {state.currentRoomId}
+                       users = {state.users}
                        navigator = {navigator}  {...actions}/>
             );
         }
         if (routeId === 'Rooms') {
             return (
-                <Rooms state = {state}
-                       navigator = {navigator}  {...actions} />
+                <Rooms
+                    roomId = {state.currentRoomId}
+                    rooms = {state.rooms}
+                    navigator = {navigator}  {...actions} />
             );
         }
         if (routeId === 'Messages') {
             return (
-                <Messages state = {state}
-                          navigator = {navigator}  {...actions} data = {route.data}/>
+                <Messages messages = {state.messages}
+                          navigator = {navigator}  {...actions} />
             );
         }
     }
 }
 
 export default connect(state => ({
-        state: state
+        state: state.RootReducer
     }),
     (dispatch) => ({
         actions: bindActionCreators(actions, dispatch)

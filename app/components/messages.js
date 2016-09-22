@@ -35,34 +35,6 @@ export default class Messages extends Component {
         )
     }
 
-    getMessages() {
-        AsyncStorage.getItem('X-AUTH-TOKEN').then((authToken) => {
-            console.log(this.props.data);
-            var url = 'http://chat.exposit-ds.com/messages/room/' + this.props.data.roomId + '?page=' + this.state.page;
-            console.log(url);
-            fetch(url,
-                {
-                    method: 'GET',
-                    headers: {
-                        'X-AUTH-TOKEN': authToken
-                    }
-                }
-            ).then((response) =>
-                response.json()
-            ).then((responseJson) => {
-                console.log(responseJson['messages']);
-                this.setState({
-                    page: ++this.state.page,
-                    messages: this.state.messages.cloneWithRows(responseJson['messages'])
-                });
-                console.log(this.state.users);
-            })
-                .catch((error) => {
-                    console.error(error);
-                })
-        });
-    }
-
 
     _renderRow(rowData) {
         var date = new Date(rowData.date);
@@ -85,12 +57,12 @@ export default class Messages extends Component {
                     <Text style = {[styles.goNextButtonText]}>Go Back To Users ></Text>
                 </TouchableHighlight>
                 <TouchableHighlight underlayColor = "#56a570" style = {[styles.signInButton]}
-                                    onPress = {this.getMessages.bind(this)}>
+                                    onPress = {this.props.loadMessages}>
                     <Text style = {[styles.signInButtonText]}>LOAD MESSAGES</Text>
                 </TouchableHighlight>
                 <ScrollView>
                     <ListView style = {{flex: 1, height: 500}}
-                              dataSource = {this.state.messages}
+                              dataSource = {this.props.messages}
                               renderRow = {this._renderRow.bind(this)}/>
                 </ScrollView>
             </View>

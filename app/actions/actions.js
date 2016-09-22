@@ -1,10 +1,10 @@
 import * as types from './actionTypes';
 
 
-export function openUserChatRoom(firstName) {
+export function openChatRoom(roomId) {
     return {
-        type: types.OPEN_USER_CHAT_ROOM,
-        firstName: firstName
+        type: types.OPEN_CHAT_ROOM,
+        roomId: roomId
     };
 }
 
@@ -13,4 +13,30 @@ export function connectWebsockets() {
         type: types.CONNECT_WEBSOCKETS
     };
 }
+
+export function loadRooms() {
+    return {
+        type: types.LOAD_ROOMS
+    };
+}
+
+export function loadUsers() {
+    return {
+        type: types.LOAD_USERS
+    };
+}
+
+export function loadMessages() {
+    return {
+        type: types.LOAD_MESSAGES
+    };
+}
+
+export function login() {
+    return {
+        type: types.LOGIN
+    };
+}
+
+
 

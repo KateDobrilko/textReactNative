@@ -1,4 +1,4 @@
-import WebsocketReducer from './rootReducer';
+import RootReducer from './rootReducer';
 export {
-    WebsocketReducer
+    RootReducer
 };

@@ -18,19 +18,23 @@ export default class Users extends Component {
     constructor(props) {
         super(props);
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        this.state =
-        {
-            users: ds.cloneWithRows(users),
-            currentRoomId: ""
+        this.state = {
+            usersDataSource: ds.cloneWithRows(users)
         }
-    }
 
+    }
     componentDidMount() {
-        console.log(this.props.connectWebsockets)
+        console.log(this.props.connectWebsockets);
+        this.props.loadRooms();
         this.props.connectWebsockets();
     }
 
-    
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            usersDataSource: this.state.usersDataSource.cloneWithRows(nextProps.users)
+        });
+        console.log(this.state);
+    }
 
     navMessages(roomId) {
         this.props.navigator.push({
@@ -48,31 +52,11 @@ export default class Users extends Component {
         });
     }
 
-    getUsers() {
-        AsyncStorage.getItem('X-AUTH-TOKEN').then((authToken) => {
-            fetch('http://chat.exposit-ds.com/account/users',
-                {
-                    method: 'GET',
-                    headers: {
-                        'X-AUTH-TOKEN': authToken
-                    }
-                }
-            ).then((response) => response.json()).then((responseJson) => {
-                console.log(responseJson['employers']);
-                this.setState({
-                    users: this.state.users.cloneWithRows(responseJson['employers'])
-                });
-                console.log(this.state.users);
-            })
-                .catch((error) => {
-                    console.error(error);
-                })
-        });
-    }
-
 
     _renderRow(rowData) {
-        return (<TouchableOpacity onPress = {() => this.navMessages(rowData.privateRoomId)}
+        return (<TouchableOpacity onPress = {() => {
+                                  this.props.openChatRoom(rowData.privateRoomId);
+                                  this.navMessages();}}
                                   style = {{flexDirection:'row', flexWrap:'wrap', height:120,borderBottomColor: '#ededed', borderBottomWidth:1, paddingLeft:10, paddingTop:10}}>
             <View style = {{justifyContent: 'flex-start'}}>
                 <Image style = {[styles.roundedProfileImage]}
@@ -86,6 +70,7 @@ export default class Users extends Component {
     }
 
     render() {
+        console.log(this.props.users);
         return (
             <View>
                 <TouchableHighlight underlayColor = "#56a570" style = {[styles.goNextButton]}
@@ -93,17 +78,16 @@ export default class Users extends Component {
                     <Text style = {[styles.goNextButtonText]}>Go To Rooms ></Text>
                 </TouchableHighlight>
                 <TouchableHighlight underlayColor = "#56a570" style = {[styles.signInButton]}
-                                    onPress = {this.getUsers.bind(this)}>
+                                    onPress = {this.props.loadUsers}>
                     <Text style = {[styles.signInButtonText]}>LOAD USERS</Text>
                 </TouchableHighlight>
                 <ScrollView>
                     <ListView style = {{flex: 1, height: 500}}
-                              dataSource = {this.state.users}
+                              dataSource = {this.state.usersDataSource}
                               renderRow = {this._renderRow.bind(this)}/>
                 </ScrollView>
             </View>
         )
-
     }
 }
 const styles = StyleSheet.create({
