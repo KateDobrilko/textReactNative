@@ -18,10 +18,21 @@ export default class Rooms extends Component {
     constructor(props) {
         super(props);
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        this.state =
-        {
-            rooms: ds.cloneWithRows(rooms)
+        this.state = {
+            roomsDataSource: ds.cloneWithRows(rooms)
         }
+    }
+
+    componentDidMount() {
+        console.log(this.props.connectWebsockets);
+        this.props.loadRooms();
+        this.props.connectWebsockets();
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            roomsDataSource: this.state.roomsDataSource.cloneWithRows(nextProps.rooms)
+        });
     }
 
     navMessages(roomId) {
@@ -30,7 +41,6 @@ export default class Rooms extends Component {
             data: {
                 roomId: roomId
             }
-
         });
     }
 
@@ -60,12 +70,12 @@ export default class Rooms extends Component {
                     <Text style = {[styles.goNextButtonText]}>Go To Users ></Text>
                 </TouchableHighlight>
                 <TouchableHighlight underlayColor = "#56a570" style = {[styles.signInButton]}
-                                    onPress = {this.props.loadMessages.bind(this)}>
+                                    onPress = {this.props.loadRooms.bind(this)}>
                     <Text style = {[styles.signInButtonText]}>LOAD ROOMS</Text>
                 </TouchableHighlight>
                 <ScrollView>
                     <ListView style = {{flex: 1, height: 520, flexDirection: 'row'}}
-                              dataSource = {this.state.rooms}
+                              dataSource = {this.state.roomsDataSource}
                               renderRow = {this._renderRow.bind(this)}/>
                 </ScrollView>
             </View>

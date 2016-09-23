@@ -13,30 +13,11 @@ const initState = {
     users: [],
     messages: [],
     currentRoomId: '',
-    messagesPage: 0
+    messagesPage: 0,
+    currentUserId: ''
+
 };
 export default function RootReducer(state = initState, action = {}) {
-    function loadRooms() {
-        AsyncStorage.getItem('X-AUTH-TOKEN').then((authToken) => {
-            fetch('http://chat.exposit-ds.com/user/room/all',
-                {
-                    method: 'GET',
-                    headers: {
-                        'X-AUTH-TOKEN': authToken
-                    }
-                }
-            ).then((response) => response.json()).then((responseJson) => {
-
-                state.rooms = responseJson['rooms'];
-                return {
-                    ...state
-                };
-            }).catch((error) => {
-                console.error(error);
-            })
-        });
-    }
-
     function joinRooms() {
         var data = {
             event: websocketEventsConstants.JOIN_ROOMS,
@@ -51,7 +32,7 @@ export default function RootReducer(state = initState, action = {}) {
                     roomIds.push(room.id);
                 });
                 data['roomIds'] = roomIds;
-                console.log(data);
+
                 state.ws.send(JSON.stringify(data));
             });
         });
@@ -60,9 +41,9 @@ export default function RootReducer(state = initState, action = {}) {
     switch (action.type) {
         case types.OPEN_CHAT_ROOM:
         {
-            state.currentRoomId = action.roomId;
             return {
-                ...state
+                ...state,
+                currentRoomId: action.roomId
             };
         }
         case types.CONNECT_WEBSOCKETS:
@@ -75,21 +56,55 @@ export default function RootReducer(state = initState, action = {}) {
             };
             state.ws.onmessage = (e) => {
                 var data = JSON.parse(e.data);
+
+
                 switch (data["event"]) {
                     case websocketEventsConstants.SOCKET_INIT_MSG :
                     {
                         console.log(data);
                         console.log("SOCKET_INIT_MSG Arrived!");
-                        AsyncStorage.setItem("connectionToken", data["connectionToken"]).then(joinRooms());
+                        AsyncStorage.getItem('X-AUTH-TOKEN').then((authToken) => {
+                            fetch('http://chat.exposit-ds.com/user/room/all',
+                                {
+                                    method: 'GET',
+                                    headers: {
+                                        'X-AUTH-TOKEN': authToken
+                                    }
+                                }
+                            ).then((response) => response.json()).then((responseJson) => {
+                                AsyncStorage.setItem("connectionToken", data["connectionToken"]).then(joinRooms());
+                                return {
+                                    ...state,
+                                    rooms: state.rooms.push.apply(state.rooms, responseJson['rooms'])
+                                };
+
+                            }).catch((error) => {
+                                console.error(error);
+                            })
+                        });
                     }
                     case websocketEventsConstants.USER_MESSAGE:
                     {
-
+                    }
+                    case websocketEventsConstants.JOIN_ROOMS:
+                    {
+                        console.log("This is join rooms input!");
+                        console.log(data);
+                        var newData = {
+                            event: websocketEventsConstants.REQUEST_USERS_ONLINE,
+                            userId: data["userId"]
+                        };
+                        AsyncStorage.getItem('X-AUTH-TOKEN').then((authToken) => {
+                            data['authToken'] = authToken;
+                            AsyncStorage.getItem('connectionToken').then((connectionToken) => {
+                                newData['connectionToken'] = connectionToken;
+                                state.ws.send(JSON.stringify(newData));
+                            });
+                        });
                     }
                 }
             };
             state.ws.onerror = (e) => {
-
                 console.log(e.message);
             };
             return {
@@ -98,18 +113,31 @@ export default function RootReducer(state = initState, action = {}) {
         }
         case types.LOAD_ROOMS:
         {
-            loadRooms().then((response) => response.json()).then((responseJson) => {
+            AsyncStorage.getItem('X-AUTH-TOKEN').then((authToken) => {
+                fetch('http://chat.exposit-ds.com/user/room/all',
+                    {
+                        method: 'GET',
+                        headers: {
+                            'X-AUTH-TOKEN': authToken
+                        }
+                    }
+                ).then((response) => response.json()).then((responseJson) => {
+                    return {
+                        ...state,
+                        rooms: state.rooms.push.apply(state.rooms, responseJson['rooms'])
+                    };
 
-                state.rooms = responseJson['rooms'];
-                return {
-                    ...state
-                };
-            }).catch((error) => {
-                console.error(error);
+                }).catch((error) => {
+                    console.error(error);
+                })
             });
+            return {
+                ...state
+            };
         }
         case types.LOAD_USERS:
         {
+            console.log("function load users started!");
             AsyncStorage.getItem('X-AUTH-TOKEN').then((authToken) => {
                 fetch('http://chat.exposit-ds.com/account/users',
                     {
@@ -119,6 +147,7 @@ export default function RootReducer(state = initState, action = {}) {
                         }
                     }
                 ).then((response) => response.json()).then((responseJson) => {
+
                     return {
                         ...state,
                         users: state.users.push.apply(state.users, responseJson['employers'])
@@ -135,9 +164,7 @@ export default function RootReducer(state = initState, action = {}) {
         case types.LOAD_MESSAGES:
         {
             AsyncStorage.getItem('X-AUTH-TOKEN').then((authToken) => {
-                console.log(this.props.data);
                 var url = 'http://chat.exposit-ds.com/messages/room/' + state.currentRoomId + '?page=' + state.messagesPage;
-                console.log(url);
                 fetch(url,
                     {
                         method: 'GET',
@@ -148,8 +175,12 @@ export default function RootReducer(state = initState, action = {}) {
                 ).then((response) =>
                     response.json()
                 ).then((responseJson) => {
-                    state.messagesPage = ++state.messagesPage.page;
-                    state.messages = responseJson['messages'];
+                    state.messagesPage = state.messagesPage++;
+                    return {
+                        ...state,
+                        messages: state.messages.push.apply(state.messages, responseJson['messages']),
+                        messagesPage: ++state.messagesPage
+                    };
                 }).catch((error) => {
                     console.error(error);
                 })

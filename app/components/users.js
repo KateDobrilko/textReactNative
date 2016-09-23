@@ -21,11 +21,10 @@ export default class Users extends Component {
         this.state = {
             usersDataSource: ds.cloneWithRows(users)
         }
-
     }
+
     componentDidMount() {
         console.log(this.props.connectWebsockets);
-        this.props.loadRooms();
         this.props.connectWebsockets();
     }
 
@@ -33,7 +32,6 @@ export default class Users extends Component {
         this.setState({
             usersDataSource: this.state.usersDataSource.cloneWithRows(nextProps.users)
         });
-        console.log(this.state);
     }
 
     navMessages(roomId) {
@@ -42,7 +40,6 @@ export default class Users extends Component {
             data: {
                 roomId: roomId
             }
-
         });
     }
 

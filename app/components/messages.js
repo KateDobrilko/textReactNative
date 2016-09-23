@@ -19,13 +19,16 @@ export default class Messages extends Component {
     constructor(props) {
         super(props)
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        this.state =
-        {
-            page: 0,
-            messages: ds.cloneWithRows(messages)
+        this.state = {
+            messagesDataSource: ds.cloneWithRows(messages)
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            messagesDataSource: this.state.messagesDataSource.cloneWithRows(nextProps.messages)
+        });
+    }
 
     navUsers() {
         this.props.navigator.push(
@@ -34,7 +37,6 @@ export default class Messages extends Component {
             }
         )
     }
-
 
     _renderRow(rowData) {
         var date = new Date(rowData.date);
@@ -62,7 +64,7 @@ export default class Messages extends Component {
                 </TouchableHighlight>
                 <ScrollView>
                     <ListView style = {{flex: 1, height: 500}}
-                              dataSource = {this.props.messages}
+                              dataSource = {this.state.messagesDataSource}
                               renderRow = {this._renderRow.bind(this)}/>
                 </ScrollView>
             </View>
