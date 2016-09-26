@@ -38,5 +38,12 @@ export function login() {
     };
 }
 
+export function sendMessage(messageText) {
+    return {
+        type: types.SEND_MESSAGE,
+        messageText: messageText
+    }
+}
+
 
 

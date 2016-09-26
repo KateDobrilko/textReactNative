@@ -9,7 +9,8 @@ import {
     AsyncStorage,
     ListView,
     ScrollView,
-    StyleSheet
+    StyleSheet,
+    InteractionManager
 } from 'react-native';
 var gravatarApi = require('gravatar-api');
 
@@ -19,13 +20,17 @@ export default class Users extends Component {
         super(props);
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            usersDataSource: ds.cloneWithRows(users)
+            usersDataSource: ds.cloneWithRows(users),
+            renderPlaceholderOnly: true
         }
     }
 
     componentDidMount() {
         console.log(this.props.connectWebsockets);
         this.props.connectWebsockets();
+        InteractionManager.runAfterInteractions(() => {
+            this.setState({renderPlaceholderOnly: false});
+        });
     }
 
     componentWillReceiveProps(nextProps) {
@@ -49,6 +54,15 @@ export default class Users extends Component {
         });
     }
 
+    logOut() {
+        AsyncStorage.removeItem('X-AUTH-TOKEN');
+        this.props.navigator.push(
+            {
+                id: "Login"
+            }
+        );
+    }
+
 
     _renderRow(rowData) {
         return (<TouchableOpacity onPress = {() => {
@@ -67,26 +81,44 @@ export default class Users extends Component {
     }
 
     render() {
+        if (this.state.renderPlaceholderOnly) {
+            return this._renderPlaceholderView();
+        }
         console.log(this.props.users);
         return (
             <View>
+                <TouchableHighlight underlayColor = "black" style = {[styles.logOutButton]}
+                                    onPress = {this.logOut.bind(this)}>
+                    <Text style = {[styles.goNextButtonText]}>Log Out</Text>
+                </TouchableHighlight>
                 <TouchableHighlight underlayColor = "#56a570" style = {[styles.goNextButton]}
                                     onPress = {this.navRooms.bind(this)}>
                     <Text style = {[styles.goNextButtonText]}>Go To Rooms ></Text>
                 </TouchableHighlight>
                 <TouchableHighlight underlayColor = "#56a570" style = {[styles.signInButton]}
-                                    onPress = {this.props.loadUsers}>
+                                    onPress = {this.requestAnimationFrame(() => {
+                                    this.props.loadUsers();
+                                    })}>
                     <Text style = {[styles.signInButtonText]}>LOAD USERS</Text>
                 </TouchableHighlight>
                 <ScrollView>
-                    <ListView style = {{flex: 1, height: 500}}
+                    <ListView style = {{flex: 1, height: 470}}
                               dataSource = {this.state.usersDataSource}
                               renderRow = {this._renderRow.bind(this)}/>
                 </ScrollView>
             </View>
         )
     }
+
+    _renderPlaceholderView() {
+        return (
+            <View>
+                <Text>Loading...</Text>
+            </View>
+        );
+    }
 }
+
 const styles = StyleSheet.create({
     roundedProfileImage: {
         justifyContent: 'flex-start',
@@ -98,6 +130,10 @@ const styles = StyleSheet.create({
     },
     signInButton: {
         backgroundColor: '#5fba7d',
+        padding: 10
+    },
+    logOutButton: {
+        backgroundColor: '#111',
         padding: 10
     },
     signInButtonText: {

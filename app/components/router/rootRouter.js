@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import {View, Navigator, TouchableHighlight, Text} from 'react-native';
+import {View, Navigator, TouchableHighlight, Text, AsyncStorage} from 'react-native';
 
 import Login from '../login';
 import Messages from '../messages';
@@ -15,9 +15,23 @@ class RootRouter extends Component {
     render() {
         return (
             <Navigator
-                initialRoute = {{id: 'Login'}}
+                initialRoute = {this.getInitialRoute()}
                 renderScene = {this.renderScene.bind(this)}/>
         );
+    }
+
+    getInitialRoute() {
+        if (this.isAuthorized()) {
+            return {id: 'Login'};
+        }
+        else {
+            return {id: 'Users'}
+        }
+    }
+
+    isAuthorized() {
+        return AsyncStorage.getItem('X-AUTH-TOKEN') ? true : false;
+
     }
 
     renderScene(route, navigator) {

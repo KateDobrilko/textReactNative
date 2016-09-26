@@ -9,7 +9,9 @@ import {
     AsyncStorage,
     ListView,
     ScrollView,
-    StyleSheet
+    StyleSheet,
+    TextInput,
+    InteractionManager
 } from 'react-native';
 
 
@@ -20,8 +22,17 @@ export default class Messages extends Component {
         super(props)
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            messagesDataSource: ds.cloneWithRows(messages)
+            messagesDataSource: ds.cloneWithRows(messages),
+            messageText: '',
+            renderPlaceholderOnly: true
+
         }
+    }
+
+    componentDidMount() {
+        InteractionManager.runAfterInteractions(() => {
+            this.setState({renderPlaceholderOnly: false});
+        });
     }
 
     componentWillReceiveProps(nextProps) {
@@ -34,6 +45,15 @@ export default class Messages extends Component {
         this.props.navigator.push(
             {
                 id: "Users"
+            }
+        )
+    }
+
+    logOut() {
+        AsyncStorage.removeItem('X-AUTH-TOKEN');
+        this.props.navigator.push(
+            {
+                id: "Login"
             }
         )
     }
@@ -54,6 +74,10 @@ export default class Messages extends Component {
     render() {
         return (
             <View>
+                <TouchableHighlight underlayColor = "black" style = {[styles.logOutButton]}
+                                    onPress = {this.logOut.bind(this)}>
+                    <Text style = {[styles.goNextButtonText]}>Log Out</Text>
+                </TouchableHighlight>
                 <TouchableHighlight underlayColor = "#56a570" style = {[styles.goNextButton]}
                                     onPress = {this.navUsers.bind(this)}>
                     <Text style = {[styles.goNextButtonText]}>Go Back To Users ></Text>
@@ -62,8 +86,17 @@ export default class Messages extends Component {
                                     onPress = {this.props.loadMessages}>
                     <Text style = {[styles.signInButtonText]}>LOAD MESSAGES</Text>
                 </TouchableHighlight>
+                <Text style = {[styles.labelText]}>Message input:</Text>
+                <View style = {[styles.textInputWrapper]}>
+                    <TextInput style = {[styles.textInput]}
+                               onChangeText = {(messageText) => this.setState({messageText})}></TextInput>
+                </View>
+                <TouchableHighlight underlayColor = "#b2e3f7" style = {[styles.signInButton]}
+                                    onPress = {() => {this.props.sendMessage(this.state.messageText);}}>
+                    <Text style = {[styles.signInButtonText]}>Send Message</Text>
+                </TouchableHighlight>
                 <ScrollView>
-                    <ListView style = {{flex: 1, height: 500}}
+                    <ListView style = {{flex: 1, height: 350}}
                               dataSource = {this.state.messagesDataSource}
                               renderRow = {this._renderRow.bind(this)}/>
                 </ScrollView>
@@ -90,6 +123,10 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textAlign: 'center'
     },
+    logOutButton: {
+        backgroundColor: '#111',
+        padding: 10
+    },
     goNextButton: {
         backgroundColor: '#ffd47c',
         padding: 10
@@ -98,5 +135,5 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 18,
         textAlign: 'center'
-    },
+    }
 });

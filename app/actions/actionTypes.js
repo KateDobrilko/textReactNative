@@ -4,6 +4,7 @@ export const LOAD_ROOMS = 'LOAD_ROOMS';
 export const LOAD_USERS = 'LOAD_USERS';
 export const LOAD_MESSAGES = 'LOAD_MESSAGES';
 export const LOGIN = 'LOGIN';
+export const SEND_MESSAGE = 'SEND_MESSAGE';
 
 
 

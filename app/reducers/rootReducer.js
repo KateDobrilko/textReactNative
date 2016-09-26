@@ -4,8 +4,16 @@
 import * as types from '../actions/actionTypes';
 import * as actions from '../actions/actions';
 import * as websocketEventsConstants from '../constants/websocketEvents';
+import * as messageTypeConstants from '../constants/messageTypes';
 import {AsyncStorage, ListView} from 'react-native';
+var md5 = require('md5');
+var PushNotification = require('react-native-push-notification');
 
+PushNotification.configure({
+    onNotification: function (notification) {
+
+    }
+});
 
 const initState = {
     ws: {},
@@ -15,8 +23,8 @@ const initState = {
     currentRoomId: '',
     messagesPage: 0,
     currentUserId: ''
-
 };
+
 export default function RootReducer(state = initState, action = {}) {
     function joinRooms() {
         var data = {
@@ -32,7 +40,6 @@ export default function RootReducer(state = initState, action = {}) {
                     roomIds.push(room.id);
                 });
                 data['roomIds'] = roomIds;
-
                 state.ws.send(JSON.stringify(data));
             });
         });
@@ -59,10 +66,52 @@ export default function RootReducer(state = initState, action = {}) {
 
 
                 switch (data["event"]) {
+                    case websocketEventsConstants.JOIN_ROOMS:
+                    {
+
+                        var newData = {
+                            event: websocketEventsConstants.REQUEST_USERS_ONLINE,
+                            userId: data["userId"]
+                        };
+                        AsyncStorage.getItem('X-AUTH-TOKEN').then((authToken) => {
+                            data['authToken'] = authToken;
+                            AsyncStorage.getItem('connectionToken').then((connectionToken) => {
+                                newData['connectionToken'] = connectionToken;
+                                state.ws.send(JSON.stringify(newData));
+                            });
+                        });
+                        break;
+
+                    }
+
+                    case websocketEventsConstants.USER_MESSAGE:
+                    {
+
+                        PushNotification.localNotification({
+                            vibrate: true, // (optional) default: true
+                            vibration: 300,
+                            title: "My Notification Title",
+                            message: "New Message Income",
+                            playSound: true,
+                            soundName: 'default',
+                            number: '1'
+                        });
+
+                        return {
+                            ...state,
+                            message: state.messages.push.apply(data)
+                        }
+                    }
+
+                    case websocketEventsConstants.REQUEST_USERS_ONLINE:
+                    {
+                       
+                        break;
+                    }
+
                     case websocketEventsConstants.SOCKET_INIT_MSG :
                     {
-                        console.log(data);
-                        console.log("SOCKET_INIT_MSG Arrived!");
+
                         AsyncStorage.getItem('X-AUTH-TOKEN').then((authToken) => {
                             fetch('http://chat.exposit-ds.com/user/room/all',
                                 {
@@ -82,26 +131,9 @@ export default function RootReducer(state = initState, action = {}) {
                                 console.error(error);
                             })
                         });
+                        break;
                     }
-                    case websocketEventsConstants.USER_MESSAGE:
-                    {
-                    }
-                    case websocketEventsConstants.JOIN_ROOMS:
-                    {
-                        console.log("This is join rooms input!");
-                        console.log(data);
-                        var newData = {
-                            event: websocketEventsConstants.REQUEST_USERS_ONLINE,
-                            userId: data["userId"]
-                        };
-                        AsyncStorage.getItem('X-AUTH-TOKEN').then((authToken) => {
-                            data['authToken'] = authToken;
-                            AsyncStorage.getItem('connectionToken').then((connectionToken) => {
-                                newData['connectionToken'] = connectionToken;
-                                state.ws.send(JSON.stringify(newData));
-                            });
-                        });
-                    }
+
                 }
             };
             state.ws.onerror = (e) => {
@@ -137,7 +169,6 @@ export default function RootReducer(state = initState, action = {}) {
         }
         case types.LOAD_USERS:
         {
-            console.log("function load users started!");
             AsyncStorage.getItem('X-AUTH-TOKEN').then((authToken) => {
                 fetch('http://chat.exposit-ds.com/account/users',
                     {
@@ -191,6 +222,32 @@ export default function RootReducer(state = initState, action = {}) {
         }
         case types.LOGIN:
         {
+            return {
+                ...state
+            };
+        }
+
+        case types.SEND_MESSAGE:
+        {
+            var message = {
+                content: action.messageText,
+                date: '',
+                event: websocketEventsConstants.USER_MESSAGE,
+                firstName: '',
+                hash: md5(action.messageText),
+                lastName: '',
+                roomId: state.currentRoomId,
+                type: messageTypeConstants.TEXT_TYPE
+            };
+
+            AsyncStorage.getItem('X-AUTH-TOKEN').then((authToken) => {
+                message['authToken'] = authToken;
+                AsyncStorage.getItem('connectionToken').then((connectionToken) => {
+                    message['connectionToken'] = connectionToken;
+                    state.ws.send(JSON.stringify(message));
+                });
+            });
+
             return {
                 ...state
             };
