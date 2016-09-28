@@ -10,7 +10,6 @@ const reducer = combineReducers(reducers);
 const store = createStoreWithMiddleware(reducer);
 
 export default class testReactNative extends Component {
-
     render() {
         console.disableYellowBox = true;
         return (

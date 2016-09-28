@@ -34,9 +34,11 @@ export default class Users extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            usersDataSource: this.state.usersDataSource.cloneWithRows(nextProps.users)
-        });
+        if (nextProps.users.length != 0) {
+            this.setState({
+                usersDataSource: this.state.usersDataSource.cloneWithRows(nextProps.users)
+            });
+        }
     }
 
     navMessages(roomId) {
@@ -96,9 +98,7 @@ export default class Users extends Component {
                     <Text style = {[styles.goNextButtonText]}>Go To Rooms ></Text>
                 </TouchableHighlight>
                 <TouchableHighlight underlayColor = "#56a570" style = {[styles.signInButton]}
-                                    onPress = {this.requestAnimationFrame(() => {
-                                    this.props.loadUsers();
-                                    })}>
+                                    onPress = {this.props.loadUsers}>
                     <Text style = {[styles.signInButtonText]}>LOAD USERS</Text>
                 </TouchableHighlight>
                 <ScrollView>

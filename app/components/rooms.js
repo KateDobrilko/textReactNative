@@ -96,9 +96,7 @@ export default class Rooms extends Component {
                     <Text style = {[styles.goNextButtonText]}>Go To Users ></Text>
                 </TouchableHighlight>
                 <TouchableHighlight underlayColor = "#56a570" style = {[styles.signInButton]}
-                                    onPress = {this.requestAnimationFrame(() => {
-                                    this.props.loadRooms.bind(this);
-                                    })}>
+                                    onPress = {this.props.loadRooms.bind(this)}>
                     <Text style = {[styles.signInButtonText]}>LOAD ROOMS</Text>
                 </TouchableHighlight>
                 <ScrollView>
